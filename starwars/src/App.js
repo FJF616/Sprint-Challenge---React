@@ -1,39 +1,46 @@
 import React, { Component } from 'react';
 import './App.css';
-//import Parent from './components/Parent';
+import Fetcher from './Fetcher'
+import CharList from './CharList';
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       starwarsChars: [],
-      data : {
-        results
-      }
     };
   }
+ /***
+  * 
+  * make Get request to the api then take the response data and setState with it
+  */
   componentDidMount() {
-    // feel free to research what this code is doing.
-    // At a high level we are calling an API to fetch some starwars data from the open web.
-    // We then take that data and resolve it our state.
-    fetch('https://swapi.co/api/people')
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        this.setState({ starwarsChars: data.results });
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
+    Fetcher.fetchPeople()
+    .then(starwarsChars => this.setState({  starwarsChars }))
+    .catch(error => { console.log("error", error) });
   }
+ 
+ /**
+  * 
+  * 
+  * pass props to Charlist component by using map function
+  */
   render() {
+    const { starwarsChars } = this.state;
+    //console.log(starwarsChars) 
     return (
       <div className="App">
         <h1 className="Header">React Wars</h1>
-        {this.state.map((data, i) => <Child key={i} postData={data.results} />)}
+        <h4>People / Robots</h4>
+        {
+          starwarsChars.map((starwarsChar) => {
+            return <CharList starwarsChar={starwarsChar} key={starwarsChar.key} />
+         })};
+         
       </div>
     );
   }
 }
 
 export default App;
+
+
